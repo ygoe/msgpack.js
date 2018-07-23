@@ -16,16 +16,16 @@ This codec is very lightweight. The source code has around **450 lines**, the mi
 
 ## Performance
 
-The file msgpack-tests.html contains some tests and a benchmark function that compares this library with [msgpack-lite](https://github.com/kawanet/msgpack-lite). Here are the results, in milliseconds (lower is better):
+The file msgpack-tests.html contains some tests and a benchmark function that compares this library with [msgpack-lite](https://github.com/kawanet/msgpack-lite). Here are the results, in milliseconds (lower is better). All tests done on an Intel Core i7-3770 and Windows 10.
 
-Function           | Firefox 61 | Chrome 67
--------------------|-----------:|---------:
-serializeMsgPack   |    1530 ms |    710 ms
-msgpack.encode     |    1770 ms |    580 ms
-deserializeMsgPack |    1560 ms |    870 ms
-msgpack.decode     |     730 ms |    430 ms
+Function           | Chrome 67 | Firefox 61 | Edge 16 | IE 11
+:------------------|----------:|-----------:|--------:|-------:
+serializeMsgPack   |    660 ms |    1370 ms | 2250 ms | 2600 ms
+msgpack.encode     |    580 ms |    1750 ms | 1730 ms | 2490 ms
+deserializeMsgPack |    620 ms |    1310 ms | 2240 ms |  890 ms
+msgpack.decode     |    400 ms |     630 ms | 1380 ms | 1720 ms
 
-This shows that this library is comparable with msgpack-lite when encoding and takes only twice the time when decoding. Chrome’s JavaScript execution is considerably faster than Firefox.
+This shows that this library is comparable with msgpack-lite when encoding. When decoding, it takes up to twice the time or is even much faster, depending on the browser. Chrome’s JavaScript execution is considerably faster than Firefox. Microsoft browsers are almost always the slowest.
 
 ## Usage
 
@@ -49,7 +49,7 @@ var sourceData = {
 var encodedBytes = serializeMsgPack(sourceData);
 
 // Decode again
-var decodedData = deserializeMsgPack(bin);
+var decodedData = deserializeMsgPack(encodedBytes);
 ```
 
 Include the JavaScript file into your HTML document like this:

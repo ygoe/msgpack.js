@@ -67,7 +67,7 @@ function test() {
 		alert("Test passed:\n\n" + json);
 	}
 	else {
-		alert("Test FAILED:\n\n" + data + "\n" + json + "\n\n" + Array.from(bin).map(x => x.toString(16)) + "\n\n" + data2 + "\n" + json2);
+		alert("Test FAILED:\n\n" + data + "\n" + json + "\n\n" + Array.from(bin).map(function (x) { return x.toString(16); }) + "\n\n" + data2 + "\n" + json2);
 	}
 }
 
@@ -140,10 +140,10 @@ function benchmark() {
 		// NOTE: performance.now is only accurate to a few milliseconds. This is compensated by making the test run longer.
 		for (var i = 0; i < 20000; i++) {
 			// Call the function to benchmark
-			let bin2 = serializeMsgPack(data);   // 1530 / 710 (Firefox / Chrome) [ms]
-			//let bin2 = msgpack.encode(data);   // 1770 / 580
-			//let data2 = deserializeMsgPack(bin);   // 1560 / 870
-			//let data2 = msgpack.decode(bin);   // 730 / 430
+			let bin2 = serializeMsgPack(data);   // 660 / 1370 / 2250 / 2600 (Chrome / Firefox / Edge / IE11) [ms]
+			//let bin2 = msgpack.encode(data);   // 580 / 1750 / 1730 / 2490
+			//let data2 = deserializeMsgPack(bin);   // 620 / 1310 / 2240 / 890
+			//let data2 = msgpack.decode(bin);   // 400 / 630 / 1380 / 1720
 		}
 		let t1 = Math.round(performance.now());
 		document.getElementById("log").innerHTML += "Step " + step + ": " + (t1 - t0) + " ms<br>";

@@ -1,4 +1,5 @@
 ﻿function serializeMsgPack(data) {
+	"use strict";
 	var pow32 = 0x100000000;   // 2^32
 	var array = new Uint8Array(128);
 	var length = 0;
@@ -241,10 +242,11 @@
 		return ascii ? bytes : bytes.subarray(0, i);
 	}
 
-	return array.slice(0, length);
+	return array.subarray(0, length);
 }
 
 function deserializeMsgPack(array) {
+	"use strict";
 	var pow32 = 0x100000000;   // 2^32
 	var pos = 0;
 	var data = read();
@@ -325,8 +327,9 @@ function deserializeMsgPack(array) {
 	}
 
 	function readFloat(size) {
-		var array = readBin(size);
-		var view = new DataView(array.buffer);
+		// Need to select the bytes here because readBin's subarray() is only a view
+		var view = new DataView(array.buffer, pos, size);
+		pos += size;
 		if (size === 4)
 			return view.getFloat32(0, false);
 		if (size === 8)
@@ -334,7 +337,7 @@ function deserializeMsgPack(array) {
 	}
 
 	function readBin(size) {
-		var data = array.slice(pos, pos + size);
+		var data = array.subarray(pos, pos + size);
 		pos += size;
 		return data;
 	}
@@ -360,8 +363,8 @@ function deserializeMsgPack(array) {
 
 	function readStr(size, lengthSize) {
 		if (size < 0) size = readUInt(lengthSize);
-		var array = readBin(size);
-		return decodeUtf8(array);
+		var bytes = readBin(size);
+		return decodeUtf8(bytes);
 	}
 
 	function readExt(size, lengthSize) {
