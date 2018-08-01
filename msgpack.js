@@ -262,7 +262,7 @@ function deserializeMsgPack(array) {
 		if (byte >= 0x90 && byte <= 0x9f) return readArray(byte - 0x90);   // fixarray
 		if (byte >= 0xa0 && byte <= 0xbf) return readStr(byte - 0xa0);   // fixstr
 		if (byte === 0xc0) return null;   // nil
-		if (byte === 0xc1) throw "Invalid byte code 0xc1 found.";   // never used
+		if (byte === 0xc1) throw new Error("Invalid byte code 0xc1 found.");   // never used
 		if (byte === 0xc2) return false;   // false
 		if (byte === 0xc3) return true;   // true
 		if (byte === 0xc4) return readBin(1);   // bin 8
@@ -294,7 +294,7 @@ function deserializeMsgPack(array) {
 		if (byte === 0xde) return readMap(-1, 2);   // map 16
 		if (byte === 0xdf) return readMap(-1, 4);   // map 32
 		if (byte >= 0xe0 && byte <= 0xff) return byte - 256;   // negative fixint
-		throw "Matched no byte code. Value is " + byte + ". This should never happen.";
+		throw new Error("Matched no byte code. Value is " + byte + ". This should never happen.");
 	}
 
 	function readInt(size) {
@@ -414,7 +414,7 @@ function deserializeMsgPack(array) {
 			var sec = hi * pow32 + lo;
 			return new Date(sec * 1000 + ns / 1000000);
 		}
-		throw "Invalid data length for a date value.";
+		throw new Error("Invalid data length for a date value.");
 	}
 
 	function decodeUtf8(bytes) {
