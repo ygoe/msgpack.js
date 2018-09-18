@@ -172,8 +172,8 @@
 		else {   // 32 bit nanoseconds, 64 bit seconds
 			let nanoseconds = data.getMilliseconds() * 1000000;
 			let seconds = data.getTime() / 1000;
-			hi = seconds / pow32;
-			lo = seconds % pow32;
+			let hi = seconds / pow32;
+			let lo = seconds % pow32;
 			appendBytes([0xc7, 12, 0xff, nanoseconds >>> 24, nanoseconds >>> 16, nanoseconds >>> 8, nanoseconds, hi >>> 24, hi >>> 16, hi >>> 8, hi, lo >>> 24, lo >>> 16, lo >>> 8, lo]);
 		}
 	}
