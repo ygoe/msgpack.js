@@ -18,7 +18,7 @@ This codec is very lightweight. The source code has around **480 lines**, the mi
 
 The file msgpack-tests.html contains some tests and a benchmark function that compares this library with [msgpack-lite](https://github.com/kawanet/msgpack-lite). Here are the results, in milliseconds (lower is better). All tests done on an Intel Core i7-3770 and Windows 10.
 
-Function           | Chrome 70 |      | Firefox 63 |      | Edge 16 |      | IE 11  |
+Function           | Chrome 70 |      | Firefox 63 |      | Edge 16 |      | IE 11  | &nbsp;
 :------------------|----------:|-----:|-----------:|-----:|--------:|-----:|-------:|-----:
 serializeMsgPack   |    722 ms | +10% |    1181 ms | −45% | 2739 ms | +50% | 2550 ms|  −3%
 msgpack.encode     |    659 ms |      |    2138 ms |      | 1829 ms |      | 2617 ms|
