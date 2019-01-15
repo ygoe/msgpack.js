@@ -1,0 +1,23 @@
+{
+  "name": "msgpack.js",
+  "version": "1.0.0",
+  "description": "A minimal yet complete MessagePack implementation for JavaScript. msgpack.org[JavaScript]",
+  "main": "msgpack.js",
+  "scripts": {
+    "test": "node msgpack-tests.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ygoe/msgpack.js.git"
+  },
+  "keywords": [
+    "MessagePack",
+    "javascript"
+  ],
+  "author": "ygoe",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ygoe/msgpack.js/issues"
+  },
+  "homepage": "https://github.com/ygoe/msgpack.js#readme"
+}
