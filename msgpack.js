@@ -83,23 +83,8 @@
 				appendBytes([0xd3, hi >>> 24, hi >>> 16, hi >>> 8, hi, lo >>> 24, lo >>> 16, lo >>> 8, lo]);
 			}
 			else if (data >= -0x8000000000000000 && data <= 0x7fffffffffffffff) {   // int64
-				// Split 64 bit number into two 32 bit numbers because JavaScript only regards
-				// 32 bits for bitwise operations.
-				let hi, lo;
-				if (data >= 0) {
-					// Same as uint64
-					hi = data / pow32;
-					lo = data % pow32;
-				}
-				else {
-					// Split absolute value to high and low, then NOT and ADD(1) to restore negativity
-					data++;
-					hi = Math.abs(data) / pow32;
-					lo = Math.abs(data) % pow32;
-					hi = ~hi;
-					lo = ~lo;
-				}
-				appendBytes([0xd3, hi >>> 24, hi >>> 16, hi >>> 8, hi, lo >>> 24, lo >>> 16, lo >>> 8, lo]);
+				appendByte(0xd3);
+				appendInt64(data);
 			}
 			else if (data < 0) {   // below int64
 				appendBytes([0xd3, 0x80, 0, 0, 0, 0, 0, 0, 0]);
@@ -183,20 +168,17 @@
 
 	function appendDate(data) {
 		let seconds = data.getTime() / 1000;
-		if (data.getMilliseconds() === 0 && seconds < 0x100000000) {   // 32 bit seconds
+		if (data.getMilliseconds() === 0 && seconds >= 0 && seconds < 0x100000000) {   // 32 bit seconds
 			appendBytes([0xd6, 0xff, seconds >>> 24, seconds >>> 16, seconds >>> 8, seconds]);
 		}
-		else if (seconds < 0x400000000) {   // 30 bit nanoseconds, 34 bit seconds
+		else if (seconds >= 0 && seconds < 0x400000000) {   // 30 bit nanoseconds, 34 bit seconds
 			let nanoseconds = data.getMilliseconds() * 1000000;
-			let seconds = data.getTime() / 1000;
 			appendBytes([0xd7, 0xff, nanoseconds >>> 22, nanoseconds >>> 14, nanoseconds >>> 6, ((nanoseconds << 2) >>> 0) | (seconds / pow32), seconds >>> 24, seconds >>> 16, seconds >>> 8, seconds]);
 		}
-		else {   // 32 bit nanoseconds, 64 bit seconds
+		else {   // 32 bit nanoseconds, 64 bit seconds, negative values allowed
 			let nanoseconds = data.getMilliseconds() * 1000000;
-			let seconds = data.getTime() / 1000;
-			let hi = seconds / pow32;
-			let lo = seconds % pow32;
-			appendBytes([0xc7, 12, 0xff, nanoseconds >>> 24, nanoseconds >>> 16, nanoseconds >>> 8, nanoseconds, hi >>> 24, hi >>> 16, hi >>> 8, hi, lo >>> 24, lo >>> 16, lo >>> 8, lo]);
+			appendBytes([0xc7, 12, 0xff, nanoseconds >>> 24, nanoseconds >>> 16, nanoseconds >>> 8, nanoseconds]);
+			appendInt64(seconds);
 		}
 	}
 
@@ -224,6 +206,26 @@
 		}
 		array.set(bytes, length);
 		length += bytes.length;
+	}
+
+	function appendInt64(value) {
+		// Split 64 bit number into two 32 bit numbers because JavaScript only regards 32 bits for
+		// bitwise operations.
+		let hi, lo;
+		if (value >= 0) {
+			// Same as uint64
+			hi = value / pow32;
+			lo = value % pow32;
+		}
+		else {
+			// Split absolute value to high and low, then NOT and ADD(1) to restore negativity
+			value++;
+			hi = Math.abs(value) / pow32;
+			lo = Math.abs(value) % pow32;
+			hi = ~hi;
+			lo = ~lo;
+		}
+		appendBytes([hi >>> 24, hi >>> 16, hi >>> 8, hi, lo >>> 24, lo >>> 16, lo >>> 8, lo]);
 	}
 
 	function encodeUtf8(str) {
@@ -429,15 +431,8 @@ function deserializeMsgPack(array) {
 				((data[1] << 16) >>> 0) +
 				((data[2] << 8) >>> 0) +
 				data[3];
-			let hi = ((data[4] << 24) >>> 0) +
-				((data[5] << 16) >>> 0) +
-				((data[6] << 8) >>> 0) +
-				data[7];
-			let lo = ((data[8] << 24) >>> 0) +
-				((data[9] << 16) >>> 0) +
-				((data[10] << 8) >>> 0) +
-				data[11];
-			let sec = hi * pow32 + lo;
+			pos -= 8;
+			let sec = readInt(8);
 			return new Date(sec * 1000 + ns / 1000000);
 		}
 		throw new Error("Invalid data length for a date value.");

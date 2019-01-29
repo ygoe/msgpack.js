@@ -10,8 +10,9 @@ function test() {
 	testData(new Date(2110, 1 /*Feb*/, 3, 4, 5, 6));
 	testData(new Date(0x3ffffffff * 1000 + 50));
 	testData(new Date(0xfffffffff * 1000 + 50));
+	testData(new Date(-1));
 	testData(new Uint8Array([1, 2, 3, 200]));
-	logLine("Expected to fail:");
+	logLine("<b>Expected to fail:</b>");
 	testData(new Uint32Array([1, 2, 3, 200000]));
 }	
 	
@@ -195,10 +196,10 @@ function benchmark() {
 		// NOTE: performance.now is only accurate to a few milliseconds. This is compensated by making the test run longer.
 		for (let i = 0; i < 20000; i++) {
 			// Call the function to benchmark
-			let bin2 = serializeMsgPack(data);   // 660 / 1370 / 2250 / 2600 (Chrome / Firefox / Edge / IE11) [ms]
-			//let bin2 = msgpack.encode(data);   // 580 / 1750 / 1730 / 2490
-			//let data2 = deserializeMsgPack(bin);   // 620 / 1310 / 2240 / 890
-			//let data2 = msgpack.decode(bin);   // 400 / 630 / 1380 / 1720
+			let bin2 = serializeMsgPack(data);
+			//let bin2 = msgpack.encode(data);
+			//let data2 = deserializeMsgPack(bin);
+			//let data2 = msgpack.decode(bin);
 		}
 		let t1 = Math.round(performance.now());
 		logLine(step + "/" + steps + ": " + (t1 - t0) + " ms");
