@@ -321,7 +321,7 @@ function deserializeMsgPack(array) {
 		if (byte === 0xde) return readMap(-1, 2);   // map 16
 		if (byte === 0xdf) return readMap(-1, 4);   // map 32
 		if (byte >= 0xe0 && byte <= 0xff) return byte - 256;   // negative fixint
-		throw new Error("Matched no byte code. Value is " + byte + ". This should never happen.");
+		throw new Error("The MessagePack binary data contains the value " + byte + " which is not a byte value (0 to 255). You cannot deserialize from a string, only byte arrays are supported. Please make sure you pass this function the correct binary data.");
 	}
 
 	function readInt(size) {
