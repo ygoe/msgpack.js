@@ -23,7 +23,7 @@ function testData(data) {
 	console.log("data =", data);
 	
 	// Perform the conversion and back
-	let bin = serializeMsgPack(data);
+	let bin = msgpack.serialize(data);
 	let binStr = format(bin, true);
 	
 	logLine("bin = " + binStr);
@@ -35,8 +35,8 @@ function testData(data) {
 	//logLine("bin = " + format(bin, true));
 	//console.log("bin =", bin);
 	
-	//let data2 = msgpack.decode(bin);   // external library: kawanet/msgpack-lite
-	let data2 = deserializeMsgPack(bin);   // this library
+	//let data2 = msgpackLite.decode(bin);   // external library: kawanet/msgpack-lite
+	let data2 = msgpack.deserialize(bin);   // this library
 	
 	// NOTE: Workaround for datetime decoding which is not supported by kawanet/msgpack-lite
 	//if (data2.type === 255 && data2.buffer.length === 4) {
@@ -98,7 +98,7 @@ function testData(data) {
 // Runs several functions in a loop to measure the time spent.
 function benchmark() {
 	// Define the data to test with
-	let data = {
+	const data = {
 		number1: 1,
 		number2: 20,
 		number3: 200,
@@ -142,11 +142,11 @@ function benchmark() {
 	logLine();
 
 	// Convert the data to MsgPack and back to verify correctness
-	let bin = serializeMsgPack(data);
-	//let bin = msgpack.encode(data);
+	let bin = msgpack.serialize(data);
+	//let bin = msgpackLite.encode(data);
 
-	let bin1 = serializeMsgPack(data);
-	let bin2 = new Uint8Array(msgpack.encode(data));
+	let bin1 = msgpack.serialize(data);
+	let bin2 = new Uint8Array(msgpackLite.encode(data));
 	let binStr1 = format(bin1, true);
 	let binStr2 = format(bin2, true);
 	if (binStr1 !== binStr2) {
@@ -159,7 +159,7 @@ function benchmark() {
 	}
 	logLine();
 	
-	let data2Str = format(deserializeMsgPack(bin));
+	let data2Str = format(msgpack.deserialize(bin));
 	if (dataStr !== data2Str) {
 		logLine("Mismatch between original and processed data:");
 		logLine("<b>original:</b> " + dataStr);
@@ -170,7 +170,7 @@ function benchmark() {
 	}
 	logLine();
 
-	data2Str = format(msgpack.decode(bin));
+	data2Str = format(msgpackLite.decode(bin));
 	if (dataStr !== data2Str) {
 		logLine("Mismatch between original and processed data:");
 		logLine("<b>original:</b> " + dataStr);
@@ -188,31 +188,78 @@ function benchmark() {
 
 	// Start the first iteration without blocking the browser for the entire benchmark duration
 	logLine("Starting benchmark...");
+	
+	let type = 1;
+	let results = [];
 	setTimeout(run, 100);
 	
 	function run() {
+		if (step === 0) {
+			switch (type) {
+				case 1: logLine("<b>msgpack.js serialize</b>"); break;
+				case 2: logLine("<b>msgpack-lite encode</b>"); break;
+				case 3: logLine("<b>msgpack.js deserialize</b>"); break;
+				case 4: logLine("<b>msgpack-lite decode</b>"); break;
+			}
+		}
+		
 		step++;
 		let t0 = Math.round(performance.now());
 		// NOTE: performance.now is only accurate to a few milliseconds. This is compensated by making the test run longer.
-		for (let i = 0; i < 20000; i++) {
-			// Call the function to benchmark
-			let bin2 = serializeMsgPack(data);
-			//let bin2 = msgpack.encode(data);
-			//let data2 = deserializeMsgPack(bin);
-			//let data2 = msgpack.decode(bin);
+		// Call the function to benchmark
+		switch (type) {
+			case 1:
+				for (let i = 0; i < 20000; i++) {
+					var bin2 = msgpack.serialize(data);
+				}
+				break;
+			case 2:
+				for (let i = 0; i < 20000; i++) {
+					var bin2 = msgpackLite.encode(data);
+				}
+				break;
+			case 3:
+				for (let i = 0; i < 20000; i++) {
+					var data2 = msgpack.deserialize(bin);
+				}
+				break;
+			case 4:
+				for (let i = 0; i < 20000; i++) {
+					var data2 = msgpackLite.decode(bin);
+				}
+				break;
 		}
 		let t1 = Math.round(performance.now());
 		logLine(step + "/" + steps + ": " + (t1 - t0) + " ms");
-		if (minTime === -1)
+		if (minTime === -1 || t1 - t0 < minTime)
 			minTime = t1 - t0;
-		else
-			minTime = Math.min(minTime, t1 - t0);
 
 		// Stop after a number of iterations and show the minimum time spent
-		if (step < steps)
+		if (step < steps) {
 			setTimeout(run, 100);
-		else
+		}
+		else {
 			logLine("Minimum time: <b>" + minTime + " ms</b>");
+			results.push(minTime);
+			
+			// Next phase
+			type++;
+			step = 0;
+			minTime = -1;
+			if (type <= 4) {
+				setTimeout(run, 100);
+			}
+			else {
+				logLine("<b>All results:</b>");
+				let percent1 = Math.round((results[0] / results[1] * 100) - 100);
+				let percent2 = Math.round((results[2] / results[3] * 100) - 100);
+				logLine("msgpack.js serialize: <b>" + results[0] + " ms</b>, " + (percent1 >= 0 ? "+" : "") + percent1 + "%");
+				logLine("msgpack-lite encode: <b>" + results[1] + " ms</b>");
+				logLine("msgpack.js deserialize: <b>" + results[2] + " ms</b>, " + (percent2 >= 0 ? "+" : "") + percent2 + "%");
+				logLine("msgpack-lite decode: <b>" + results[3] + " ms</b>");
+			}
+		}
+		window.scroll(0, 10000);
 	}
 }
 

@@ -1,0 +1,32 @@
+{
+  "name": "msgpack.js",
+  "version": "1.0.0",
+  "description": "A minimal yet complete MessagePack implementation for JavaScript",
+  "main": "msgpack.js",
+  "scripts": {
+    "test": "echo \"Please open msgpack-tests.html in a browser.\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ygoe/msgpack.js.git"
+  },
+  "keywords": [
+    "msgpack",
+    "messagepack",
+    "binary",
+    "codec",
+    "serialize",
+    "serializer",
+    "serialization",
+    "deserialize",
+    "deserialization",
+    "encode",
+    "decode"
+  ],
+  "author": "Yves Goergen",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ygoe/msgpack.js/issues"
+  },
+  "homepage": "https://github.com/ygoe/msgpack.js#readme"
+}

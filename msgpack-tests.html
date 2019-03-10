@@ -21,8 +21,13 @@
 		<p id="log">
 		</p>
 
-		<script src="msgpack.js"></script>
 		<script src="https://rawgit.com/kawanet/msgpack-lite/master/dist/msgpack.min.js"></script>
+		<script>
+			// Rename library object to load it side by side
+			window.msgpackLite = msgpack;
+			delete msgpack;
+		</script>
+		<script src="msgpack.js"></script>
 		<script src="msgpack-tests.js"></script>
 	</body>
 </html>
