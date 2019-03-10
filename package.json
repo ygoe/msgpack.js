@@ -1,5 +1,5 @@
 {
-  "name": "msgpack.js",
+  "name": "@ygoe/msgpack",
   "version": "1.0.0",
   "description": "A minimal yet complete MessagePack implementation for JavaScript",
   "main": "msgpack.js",

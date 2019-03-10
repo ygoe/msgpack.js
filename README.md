@@ -6,7 +6,7 @@ It is compact but still fully-featured. This library supports the complete [Mess
 
 I’m using the [MessagePack-CSharp](https://github.com/neuecc/MessagePack-CSharp/) library on the server side in my .NET applications.
 
-[![NPM](https://img.shields.io/npm/v/msgpack.js.svg)](https://www.npmjs.com/package/msgpack.js)
+[![NPM](https://img.shields.io/npm/v/@ygoe/msgpack.svg)](https://www.npmjs.com/package/@ygoe/msgpack)
 
 ## MessagePack
 
@@ -57,7 +57,7 @@ If there should be a naming conflict with another library you want to load, you 
 In Node.js, these functions are exported in the object you get from the `require` function.
 
 ```js
-var msgpack = require('msgpack.js');
+var msgpack = require('@ygoe/msgpack');
 ```
 
 ### Example
