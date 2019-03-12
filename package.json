@@ -4,8 +4,14 @@
   "description": "A minimal yet complete MessagePack implementation for JavaScript",
   "main": "msgpack.js",
   "scripts": {
-    "test": "echo \"Please open msgpack-tests.html in a browser.\" && exit 1"
+    "test": "echo \"Please open msgpack-tests.html from the source repository in a browser.\" && exit 1"
   },
+  "files": [
+    "LICENSE",
+    "msgpack.js",
+    "package.json",
+    "README.md"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ygoe/msgpack.js.git"
