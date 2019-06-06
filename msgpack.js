@@ -240,8 +240,14 @@
 	function deserialize(array) {
 		const pow32 = 0x100000000;   // 2^32
 		let pos = 0;
+		if (array instanceof ArrayBuffer) {
+			array = new Uint8Array(array);
+		}
 		if (typeof array !== "object" || typeof array.length === "undefined") {
 			throw new Error("Invalid argument type: Expected a byte array (Array or Uint8Array) to deserialize.");
+		}
+		if (!array.length) {
+			throw new Error("Invalid argument: The byte array to deserialize is empty.");
 		}
 		if (!(array instanceof Uint8Array)) {
 			array = new Uint8Array(array);
@@ -292,7 +298,7 @@
 			if (byte === 0xdf) return readMap(-1, 4);   // map 32
 			if (byte >= 0xe0 && byte <= 0xff) return byte - 256;   // negative fixint
 			console.debug("msgpack array:", array);
-			throw new Error("Invalid byte value '" + byte + "' at index " + pos + " in the MessagePack binary data (length " + array.length + "): Expecting a range of 0 to 255. This is not a byte array.");
+			throw new Error("Invalid byte value '" + byte + "' at index " + (pos - 1) + " in the MessagePack binary data (length " + array.length + "): Expecting a range of 0 to 255. This is not a byte array.");
 		}
 
 		function readInt(size) {
