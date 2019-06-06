@@ -291,7 +291,8 @@
 			if (byte === 0xde) return readMap(-1, 2);   // map 16
 			if (byte === 0xdf) return readMap(-1, 4);   // map 32
 			if (byte >= 0xe0 && byte <= 0xff) return byte - 256;   // negative fixint
-			throw new Error("Invalid byte value " + byte + " in the MessagePack binary data : Expecting a range of 0 to 255. This is not a byte array.");
+			console.debug("msgpack array:", array);
+			throw new Error("Invalid byte value '" + byte + "' at index " + pos + " in the MessagePack binary data (length " + array.length + "): Expecting a range of 0 to 255. This is not a byte array.");
 		}
 
 		function readInt(size) {
@@ -504,11 +505,6 @@
 	else {
 		// Global object
 		window[window.msgpackJsName || "msgpack"] = msgpack;
-
-		if (typeof define === "function" && define.amd) {
-			// AMD
-			define("msgpack", [], function () { return msgpack; });
-		}
 	}
 
-})(this);
+})();
