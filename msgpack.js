@@ -237,7 +237,7 @@
 	// Deserializes a MessagePack byte array to a value.
 	//
 	// array: The MessagePack byte array to deserialize. This must be an Array or Uint8Array containing bytes, not a string.
-	function deserialize(array) {
+	function deserialize(array, asList=false) {
 		const pow32 = 0x100000000;   // 2^32
 		let pos = 0;
 		if (array instanceof ArrayBuffer) {
@@ -252,9 +252,14 @@
 		if (!(array instanceof Uint8Array)) {
 			array = new Uint8Array(array);
 		}
-		let data = read();
-		if (pos < array.length) {
-			// Junk data at the end
+		let data = [];
+		let lastPos = -1;
+		while (pos < array.length && pos != lastPos) {
+			lastPos = pos;
+			data.push(read());
+			if (!asList) {
+				return data[0]; 
+			}
 		}
 		return data;
 
