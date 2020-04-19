@@ -331,7 +331,7 @@
 		}
 
 		function readFloat(size) {
-			let view = new DataView(array.buffer, pos, size);
+			let view = new DataView(array.buffer, pos + array.byteOffset, size);
 			pos += size;
 			if (size === 4)
 				return view.getFloat32(0, false);

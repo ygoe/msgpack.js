@@ -12,6 +12,7 @@ function test() {
 	testData(new Date(0xfffffffff * 1000 + 50));
 	testData(new Date(-1));
 	testData(new Uint8Array([1, 2, 3, 200]));
+	testByteOffset()
 	logLine("<b>Expected to fail:</b>");
 	testData(new Uint32Array([1, 2, 3, 200000]));
 }	
@@ -87,6 +88,27 @@ function testData(data) {
 
 	// Compare original and deserialized data
 	if (dataStr === data2Str) {
+		logLine("<span style='color: green;'>Test passed.</span>");
+	}
+	else {
+		logLine("<span style='color: red;'>Test FAILED.</span>");
+	}
+	logLine();
+}
+
+function testByteOffset() {
+	logLine("<span'>Testing ArrayBuffer byteOffset handling</span>");
+	const buf = new ArrayBuffer(10);
+	const arr0 = new Uint8Array(buf);
+	const arr1 = new Uint8Array(buf, 1);
+	for (let i = 0; i < arr0.length; i++) {
+		arr0[i] = 255;
+	}
+	for (let i = 0; i < arr1.length; i++) {
+		arr1[i] = 0;
+	}
+	arr1[0] = 0xcb;
+	if (msgpack.deserialize(arr1) === 0) {
 		logLine("<span style='color: green;'>Test passed.</span>");
 	}
 	else {
