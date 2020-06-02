@@ -97,7 +97,7 @@ function testData(data) {
 }
 
 function testByteOffset() {
-	logLine("<span'>Testing Typed Array byteOffset handling</span>");
+	logLine("<span>Testing Typed Array byteOffset handling</span>");
 	const buf = new ArrayBuffer(10);
 	const arr0 = new Uint8Array(buf);
 	const arr1 = new Uint8Array(buf, 1);
