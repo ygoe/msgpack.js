@@ -1,6 +1,6 @@
 {
   "name": "@ygoe/msgpack",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A minimal yet complete MessagePack implementation for JavaScript",
   "main": "msgpack.js",
   "scripts": {
@@ -11,6 +11,7 @@
     "msgpack.js",
     "msgpack.min.js",
     "msgpack.min.js.map",
+    "msgpack.d.ts",
     "package.json",
     "README.md"
   ],
