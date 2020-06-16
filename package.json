@@ -3,6 +3,7 @@
   "version": "1.0.3",
   "description": "A minimal yet complete MessagePack implementation for JavaScript",
   "main": "msgpack.js",
+  "typings": "msgpack.d.ts",
   "scripts": {
     "test": "echo \"Please open msgpack-tests.html from the source repository in a browser.\" && exit 1"
   },
