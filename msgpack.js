@@ -156,7 +156,11 @@
 
 		function appendObject(data) {
 			let length = 0;
-			for (let key in data) length++;
+			for (let key in data) {
+				if (data[key] !== undefined) {
+					length++;
+				}
+			}
 
 			if (length <= 0xf)
 				appendByte(0x80 + length);
@@ -166,8 +170,11 @@
 				appendBytes([0xdf, length >>> 24, length >>> 16, length >>> 8, length]);
 
 			for (let key in data) {
-				append(key);
-				append(data[key]);
+				let value = data[key];
+				if (value !== undefined) {
+					append(key);
+					append(value);
+				}
 			}
 		}
 
@@ -426,7 +433,7 @@
 				break;
 			}
 		}
-		
+
 		// Based on: https://gist.github.com/pascaldekloe/62546103a1576803dade9269ccf76330
 		let i = 0, bytes = new Uint8Array(str.length * (ascii ? 1 : 4));
 		for (let ci = 0; ci !== length; ci++) {
