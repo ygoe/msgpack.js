@@ -13,8 +13,17 @@ function test() {
 	testData(new Date(-1));
 	testData(new Uint8Array([1, 2, 3, 200]));
 	testByteOffset()
+
 	logLine("<b>Expected to fail:</b>");
 	testData(new Uint32Array([1, 2, 3, 200000]));
+
+	logLine("<b>Expected to throw an error:</b>");
+	try {
+		testData(function () { });
+	}
+	catch (error) {
+		logLine("<span style='color: red;'>" + error + "</span>");
+	}
 }	
 	
 function testData(data) {

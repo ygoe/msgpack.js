@@ -42,6 +42,8 @@
 					else
 						appendObject(data);
 					break;
+				default:
+					throw new Error("Invalid argument type: The type '" + (typeof data) + "' cannot be serialized.");
 			}
 		}
 
