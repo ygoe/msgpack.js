@@ -13,6 +13,7 @@ function test() {
 	testData(new Date(-1));
 	testData(new Uint8Array([1, 2, 3, 200]));
 	testByteOffset()
+	testArrayData([9, "Abc", { a: true, b: new Uint8Array([1, 2, 4]) }]);
 
 	logLine("<b>Expected to fail:</b>");
 	testData(new Uint32Array([1, 2, 3, 200000]));
@@ -118,6 +119,37 @@ function testByteOffset() {
 	}
 	arr1[0] = 0xcb;
 	if (msgpack.deserialize(arr1) === 0) {
+		logLine("<span style='color: green;'>Test passed.</span>");
+	}
+	else {
+		logLine("<span style='color: red;'>Test FAILED.</span>");
+	}
+	logLine();
+}
+
+function testArrayData(data) {
+	logLine("<span>Testing multiple concatenated MessagePack arrays</span>");
+	let dataStr = format(data);
+	
+	logLine("data = " + dataStr);
+	console.log("data =", data);
+	
+	// Perform the conversion and back
+	let bin = msgpack.serialize(data, true);
+	let binStr = format(bin, true);
+	
+	logLine("bin = " + binStr);
+	console.log("bin =", bin);
+	
+	let data2 = msgpack.deserialize(bin, true);
+	
+	let data2Str = format(data2);
+
+	logLine("data2 = " + data2Str);
+	console.log("data2 =", data2);
+
+	// Compare original and deserialized data
+	if (dataStr === data2Str) {
 		logLine("<span style='color: green;'>Test passed.</span>");
 	}
 	else {

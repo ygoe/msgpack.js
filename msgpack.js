@@ -4,12 +4,23 @@
 	// Serializes a value to a MessagePack byte array.
 	//
 	// data: The value to serialize. This can be a scalar, array or object.
-	function serialize(data) {
+	// multiple: Indicates whether multiple values in data are concatenated to multiple MessagePack arrays.
+	function serialize(data, multiple) {
+		if (multiple && !Array.isArray(data)) {
+			throw new Error("Invalid argument type: Expected an Array to serialize multiple values.");
+		}
 		const pow32 = 0x100000000;   // 2^32
 		let floatBuffer, floatView;
 		let array = new Uint8Array(128);
 		let length = 0;
-		append(data);
+		if (multiple) {
+			for (let i = 0; i < data.length; i++) {
+				append(data[i]);
+			}
+		}
+		else {
+			append(data);
+		}
 		return array.subarray(0, length);
 
 		function append(data) {
@@ -246,7 +257,8 @@
 	// Deserializes a MessagePack byte array to a value.
 	//
 	// array: The MessagePack byte array to deserialize. This must be an Array or Uint8Array containing bytes, not a string.
-	function deserialize(array) {
+	// multiple: Indicates whether multiple concatenated MessagePack arrays are returned as an array.
+	function deserialize(array, multiple) {
 		const pow32 = 0x100000000;   // 2^32
 		let pos = 0;
 		if (array instanceof ArrayBuffer) {
@@ -261,9 +273,17 @@
 		if (!(array instanceof Uint8Array)) {
 			array = new Uint8Array(array);
 		}
-		let data = read();
-		if (pos < array.length) {
-			// Junk data at the end
+		let data;
+		if (multiple) {
+			// Read as many messages as are available
+			data = [];
+			while (pos < array.length) {
+				data.push(read());
+			}
+		}
+		else {
+			// Read only one message and ignore additional data
+			data = read();
 		}
 		return data;
 
