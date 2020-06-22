@@ -15,6 +15,12 @@ function test() {
 	testByteOffset()
 	testArrayData([9, "Abc", { a: true, b: new Uint8Array([1, 2, 4]) }]);
 
+	logLine("<b>Expected to turn <i>function</i> into \"f\":</b>");
+	testData(function() {}, { invalidTypeReplacement: "f" });
+
+	logLine("<b>Expected to turn <i>function</i> into \"function\":</b>");
+	testData(function() {}, { invalidTypeReplacement: v => typeof v });
+
 	logLine("<b>Expected to fail:</b>");
 	testData(new Uint32Array([1, 2, 3, 200000]));
 
@@ -27,14 +33,14 @@ function test() {
 	}
 }	
 	
-function testData(data) {
+function testData(data, options) {
 	let dataStr = format(data);
 	
 	logLine("data = " + dataStr);
 	console.log("data =", data);
 	
 	// Perform the conversion and back
-	let bin = msgpack.serialize(data);
+	let bin = msgpack.serialize(data, options);
 	let binStr = format(bin, true);
 	
 	logLine("bin = " + binStr);

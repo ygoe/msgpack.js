@@ -4,16 +4,18 @@
 	// Serializes a value to a MessagePack byte array.
 	//
 	// data: The value to serialize. This can be a scalar, array or object.
-	// multiple: Indicates whether multiple values in data are concatenated to multiple MessagePack arrays.
-	function serialize(data, multiple) {
-		if (multiple && !Array.isArray(data)) {
+	// options: An object that defined additional options.
+	// - multiple: Indicates whether multiple values in data are concatenated to multiple MessagePack arrays.
+	// - invalidTypeReplacement: The value that is used to replace values of unsupported types, or a function that returns such a value, given the original value as parameter.
+	function serialize(data, options) {
+		if (options && options.multiple && !Array.isArray(data)) {
 			throw new Error("Invalid argument type: Expected an Array to serialize multiple values.");
 		}
 		const pow32 = 0x100000000;   // 2^32
 		let floatBuffer, floatView;
 		let array = new Uint8Array(128);
 		let length = 0;
-		if (multiple) {
+		if (options && options.multiple) {
 			for (let i = 0; i < data.length; i++) {
 				append(data[i]);
 			}
@@ -23,7 +25,7 @@
 		}
 		return array.subarray(0, length);
 
-		function append(data) {
+		function append(data, isReplacement) {
 			switch (typeof data) {
 				case "undefined":
 					appendNull(data);
@@ -54,7 +56,15 @@
 						appendObject(data);
 					break;
 				default:
-					throw new Error("Invalid argument type: The type '" + (typeof data) + "' cannot be serialized.");
+					if (!isReplacement && options && options.invalidTypeReplacement) {
+						if (typeof options.invalidTypeReplacement === "function")
+							append(options.invalidTypeReplacement(data), true);
+						else
+							append(options.invalidTypeReplacement, true);
+					}
+					else {
+						throw new Error("Invalid argument type: The type '" + (typeof data) + "' cannot be serialized.");
+					}
 			}
 		}
 
@@ -257,8 +267,9 @@
 	// Deserializes a MessagePack byte array to a value.
 	//
 	// array: The MessagePack byte array to deserialize. This must be an Array or Uint8Array containing bytes, not a string.
-	// multiple: Indicates whether multiple concatenated MessagePack arrays are returned as an array.
-	function deserialize(array, multiple) {
+	// options: An object that defined additional options.
+	// - multiple: Indicates whether multiple concatenated MessagePack arrays are returned as an array.
+	function deserialize(array, options) {
 		const pow32 = 0x100000000;   // 2^32
 		let pos = 0;
 		if (array instanceof ArrayBuffer) {
@@ -274,7 +285,7 @@
 			array = new Uint8Array(array);
 		}
 		let data;
-		if (multiple) {
+		if (options && options.multiple) {
 			// Read as many messages as are available
 			data = [];
 			while (pos < array.length) {
