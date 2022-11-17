@@ -14,7 +14,7 @@ MessagePack is an efficient binary serialisation format. It lets you exchange da
 
 ## Size
 
-This library is very lightweight. The source code has around **510 lines** (incl. browser/Node detection), the minified file has 6.6 kB and can be GZip-compressed to **2.4 kB**.
+This library is very lightweight. The source code has around **560 lines** (incl. browser/Node detection), the minified file has 7.0 kB and can be GZip-compressed to **2.7 kB**.
 
 ## Performance
 
@@ -57,7 +57,7 @@ If there should be a naming conflict with another library you want to load, you 
 In Node.js, these functions are exported in the object you get from the `require` function.
 
 ```js
-var msgpack = require('@ygoe/msgpack');
+var msgpack = require("@ygoe/msgpack");
 ```
 
 ### Example
