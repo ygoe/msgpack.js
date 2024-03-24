@@ -169,7 +169,7 @@
 		function appendBinArray(data) {
 			let length = data.length;
 
-			if (length <= 0xf)
+			if (length <= 0xff)
 				appendBytes([0xc4, length]);
 			else if (length <= 0xffff)
 				appendBytes([0xc5, length >>> 8, length]);
