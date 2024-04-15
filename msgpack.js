@@ -79,7 +79,7 @@
 		}
 
 		function appendNumber(data) {
-			if (isFinite(data) && Math.floor(data) === data) {
+			if (isFinite(data) && Number.isSafeInteger(data)) {
 				// Integer
 				if (data >= 0 && data <= 0x7f) {
 					appendByte(data);
