@@ -106,11 +106,8 @@
 					appendBytes([0xd2, data >>> 24, data >>> 16, data >>> 8, data]);
 				}
 				else if (data > 0 && data <= 0xffffffffffffffff) {   // uint64
-					// Split 64 bit number into two 32 bit numbers because JavaScript only regards
-					// 32 bits for bitwise operations.
-					let hi = data / pow32;
-					let lo = data % pow32;
-					appendBytes([0xd3, hi >>> 24, hi >>> 16, hi >>> 8, hi, lo >>> 24, lo >>> 16, lo >>> 8, lo]);
+					appendByte(0xcf);
+					appendInt64(data);
 				}
 				else if (data >= -0x8000000000000000 && data <= 0x7fffffffffffffff) {   // int64
 					appendByte(0xd3);

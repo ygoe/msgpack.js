@@ -6,6 +6,12 @@ function test() {
 	testData(-65);
 	testData(-11114294967299);
 	testData(4294967298);
+	testData(2 ** 53 - 1);
+	testData(2 ** 53);
+	testData(2 ** 100);
+	testData(-(2 ** 53 - 1));
+	testData(-(2 ** 53));
+	testData(-(2 ** 100));
 	testData(new Date(2001, 1 /*Feb*/, 3, 4, 5, 6));
 	testData(new Date(2110, 1 /*Feb*/, 3, 4, 5, 6));
 	testData(new Date(0x3ffffffff * 1000 + 50));
